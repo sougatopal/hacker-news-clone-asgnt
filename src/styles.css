@@ -1,0 +1,31 @@
+.App {
+  font-family: sans-serif;
+  text-align: center;
+}
+html,
+body {
+  box-sizing: border-box;
+}
+.header,
+.news-wrapper {
+  display: flex;
+  width: 100%;
+  padding: 5px;
+  justify-content: space-between;
+}
+.header {
+  background-color: #ff742b;
+  color: #ffffff;
+}
+.com-col {
+  width: 5%;
+}
+.vote-col {
+  width: 5%;
+}
+.upvote-col {
+  width: 5%;
+}
+.news-col {
+  width: 80%;
+}
