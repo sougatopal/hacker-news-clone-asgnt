@@ -12,10 +12,13 @@ body {
   width: 100%;
   padding: 5px;
   justify-content: space-between;
+  background-color: #f6f6ef;
+  text-align: left;
 }
 .header {
   background-color: #ff742b;
   color: #ffffff;
+  font-size: 0.75rem;
 }
 .com-col {
   width: 5%;
@@ -25,7 +28,39 @@ body {
 }
 .upvote-col {
   width: 5%;
+  position: relative;
+}
+.news-wrapper .upvote-col::after {
+  content: " ";
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  top: 50%;
+  left: 54%;
+  border-right: 2px solid black;
+  border-bottom: 2px solid black;
+  transform: translate(-50%, -50%) rotate(230deg);
 }
 .news-col {
   width: 80%;
+  text-align: left;
+  font-size: 0.55rem;
+  color: #828282;
+}
+.footer {
+  padding: 1.5rem;
+  margin-bottom: 50px;
+  text-align: right;
+}
+.pagination-bt {
+  cursor: pointer;
+  font-size: 0.75rem;
+}
+.author-text {
+  font-size: 0.65rem;
+  color: #000000;
+}
+.news-text {
+  font-size: 0.95rem;
+  color: #000000;
 }
