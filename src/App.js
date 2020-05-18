@@ -1,39 +1,22 @@
 import React from "react";
 import "./styles.css";
+import { connect } from "react-redux";
+import { fetchNews, hide, upVote } from "./actions";
 import Header from "../src/components/Header";
 import Newsrow from "../src/components/Newsrow";
 import { timeDifference, manageHideArray, managePointObj } from "./utils";
 
-const api = "https://hn.algolia.com/api/v1/search?tags=front_page";
-
-export default class App extends React.Component {
+export class App extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      hits: [],
-      curPages: 0,
-      totPage: 0
-    };
     this.paginationFn = this.paginationFn.bind(this);
-    this.fetchNews = this.fetchNews.bind(this);
     this.upVote = this.upVote.bind(this);
     this.hide = this.hide.bind(this);
   }
   componentDidMount() {
-    this.fetchNews();
+    this.props.fetchNews();
   }
-  fetchNews(pageNo) {
-    let url = pageNo ? api + "&page=" + pageNo : api;
-    fetch(url)
-      .then(res => res.json())
-      .then(res => {
-        console.log(res);
-        let hits = this.filterforVotes(this.filterforHiddenValues(res.hits));
-        let curPages = res.page;
-        let totPage = res.nbPages - 1;
-        this.setState({ hits, curPages, totPage });
-      });
-  }
+
   filterforVotes(arr) {
     let pointJson = managePointObj();
     for (let i = 0; i < arr.length; i++) {
@@ -54,33 +37,20 @@ export default class App extends React.Component {
   paginationFn(side) {
     console.log(side);
     if (side === "next") {
-      let curPage = this.state.curPages;
-      this.fetchNews(curPage + 1);
+      let curPage = this.props.curPages;
+      this.props.fetchNews(curPage + 1);
     }
     if (side === "prev") {
-      let curPage = this.state.curPages;
-      this.fetchNews(curPage - 1);
+      let curPage = this.props.curPages;
+      this.props.fetchNews(curPage - 1);
     }
   }
   upVote(obj) {
-    let upVotedId = obj.objectID;
-    let hits = [...this.state.hits];
-    for (let i = 0; i < hits.length; i++) {
-      if (hits[i].objectID === upVotedId) {
-        hits[i].points++;
-        managePointObj(upVotedId, hits[i].points);
-        break;
-      }
-    }
-
-    this.setState({ hits });
+    this.props.upVote(obj);
   }
 
   hide(obj) {
-    console.log(obj.objectID);
-    manageHideArray(obj.objectID);
-    let hits = this.state.hits.filter(elem => elem.objectID !== obj.objectID);
-    this.setState({ hits });
+    this.props.hide(obj);
   }
   getDaysAgo(dt) {
     let cDate = new Date();
@@ -88,11 +58,13 @@ export default class App extends React.Component {
     return timeDifference(cDate, prevDate);
   }
   render() {
+    console.log("props", this.props);
+    const { hits = [], curPages = 0, totPage = 0 } = this.props;
     return (
       <div className="App">
         <Header />
         <div className="news-wrapper-container">
-          {this.state.hits.map((elem, index) => {
+          {hits.map((elem, index) => {
             return (
               <Newsrow
                 key={elem.objectID}
@@ -105,7 +77,7 @@ export default class App extends React.Component {
           })}
         </div>
         <footer className="footer">
-          {this.state.curPages !== 0 ? (
+          {curPages !== 0 ? (
             <button
               className="pagination-bt"
               onClick={e => this.paginationFn("prev")}
@@ -116,7 +88,7 @@ export default class App extends React.Component {
             ""
           )}
           |
-          {this.state.curPages !== this.state.totPage ? (
+          {curPages !== totPage ? (
             <button
               className="pagination-bt"
               onClick={e => this.paginationFn("next")}
@@ -131,3 +103,16 @@ export default class App extends React.Component {
     );
   }
 }
+
+const mapStateToProps = state => {
+  return {
+    hits: state.data.hits,
+    curPages: state.data.curPages,
+    totPage: state.data.totPage
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  { fetchNews, hide, upVote }
+)(App);
