@@ -1,11 +1,8 @@
 import React from "react";
 import "./styles.css";
-import {
-  urlTrimmer,
-  timeDifference,
-  manageHideArray,
-  managePointObj
-} from "./utils";
+import Header from "../src/components/Header";
+import Newsrow from "../src/components/Newsrow";
+import { timeDifference, manageHideArray, managePointObj } from "./utils";
 
 const api = "https://hn.algolia.com/api/v1/search?tags=front_page";
 
@@ -93,32 +90,33 @@ export default class App extends React.Component {
   render() {
     return (
       <div className="App">
-        <header className="header">
-          <div className="com-col">comments</div>
-          <div className="vote-col">Vote counts</div>
-          <div className="upvote-col">UpVotes</div>
-          <div className="news-col">News Details</div>
-        </header>
+        <Header />
         <div className="news-wrapper-container">
           {this.state.hits.map((elem, index) => {
             return (
-              <div key={elem.objectID} className="news-wrapper">
-                <div className="com-col">{elem.num_comments}</div>
-                <div className="vote-col">{elem.points}</div>
-                <div className="upvote-col" onClick={() => this.upVote(elem)} />
-                <div className="news-col">
-                  <span className="news-text">{elem.title} </span>
-                  <a href={elem.url} rel="noopener noreferrer" target="_blank">
-                    {urlTrimmer(elem.url)}
-                  </a>{" "}
-                  by <span className="author-text">{elem.author}</span>{" "}
-                  {this.getDaysAgo(elem.created_at)} [
-                  <button className="hide-bt" onClick={e => this.hide(elem)}>
-                    hide
-                  </button>
-                  ]
-                </div>
-              </div>
+              <Newsrow
+                elem={elem}
+                hide={this.hide}
+                getDaysAgo={this.getDaysAgo}
+                upVote={this.upVote}
+              />
+              // <div key={elem.objectID} className="news-wrapper">
+              //   <div className="com-col">{elem.num_comments}</div>
+              //   <div className="vote-col">{elem.points}</div>
+              //   <div className="upvote-col" onClick={() => this.upVote(elem)} />
+              //   <div className="news-col">
+              //     <span className="news-text">{elem.title} </span>
+              //     <a href={elem.url} rel="noopener noreferrer" target="_blank">
+              //       {urlTrimmer(elem.url)}
+              //     </a>{" "}
+              //     by <span className="author-text">{elem.author}</span>{" "}
+              //     {this.getDaysAgo(elem.created_at)} [
+              //     <button className="hide-bt" onClick={e => this.hide(elem)}>
+              //       hide
+              //     </button>
+              //     ]
+              //   </div>
+              // </div>
             );
           })}
         </div>
