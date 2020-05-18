@@ -29,3 +29,31 @@ export function urlTrimmer(url) {
     .split(/[/?#]/);
   return urlParts[0];
 }
+export function manageHideArray(id) {
+  let hiddenArray = [];
+  if (window && window.localStorage) {
+    if (window.localStorage.hiddenNewsArray) {
+      hiddenArray = JSON.parse(window.localStorage.getItem("hiddenNewsArray"));
+    }
+  }
+  if (id) {
+    hiddenArray.push(id);
+    window.localStorage.setItem("hiddenNewsArray", JSON.stringify(hiddenArray));
+  } else {
+    return hiddenArray;
+  }
+}
+export function managePointObj(id, point) {
+  let pointObj = {};
+  if (window && window.localStorage) {
+    if (window.localStorage.pointObj) {
+      pointObj = JSON.parse(window.localStorage.getItem("pointObj"));
+    }
+  }
+  if (id) {
+    pointObj[id] = point;
+    window.localStorage.setItem("pointObj", JSON.stringify(pointObj));
+  } else {
+    return pointObj;
+  }
+}
