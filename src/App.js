@@ -1,5 +1,6 @@
 import React from "react";
 import "./styles.css";
+import { urlTrimmer, timeDifference } from "./utils";
 
 const api = "https://hn.algolia.com/api/v1/search?tags=front_page";
 
@@ -13,7 +14,8 @@ export default class App extends React.Component {
     };
     this.paginationFn = this.paginationFn.bind(this);
     this.fetchNews = this.fetchNews.bind(this);
-    this.urlTrimmer = this.urlTrimmer.bind(this);
+    this.countUpvote = this.countUpvote.bind(this);
+    this.hide = this.hide.bind(this);
   }
   componentDidMount() {
     this.fetchNews();
@@ -41,12 +43,12 @@ export default class App extends React.Component {
       this.fetchNews(curPage - 1);
     }
   }
-  urlTrimmer(url) {
-    var urlParts = url
-      .replace("http://", "")
-      .replace("https://", "")
-      .split(/[/?#]/);
-    return urlParts[0];
+  countUpvote() {}
+  hide() {}
+  getDaysAgo(dt) {
+    let cDate = new Date();
+    let prevDate = new Date(dt);
+    return timeDifference(cDate, prevDate);
   }
   render() {
     return (
@@ -60,16 +62,21 @@ export default class App extends React.Component {
         <div className="news-wrapper-container">
           {this.state.hits.map((elem, index) => {
             return (
-              <div key={index} className="news-wrapper">
+              <div key={elem.objectID} className="news-wrapper">
                 <div className="com-col">{elem.num_comments}</div>
                 <div className="vote-col">{elem.points}</div>
                 <div className="upvote-col" />
                 <div className="news-col">
                   <span className="news-text">{elem.title} </span>
                   <a href={elem.url} rel="noopener noreferrer" target="_blank">
-                    {this.urlTrimmer(elem.url)}
+                    {urlTrimmer(elem.url)}
                   </a>{" "}
-                  by <span className="author-text">{elem.author}</span>
+                  by <span className="author-text">{elem.author}</span>{" "}
+                  {this.getDaysAgo(elem.created_at)} [
+                  <button className="hide-bt" onClick={this.hide}>
+                    hide
+                  </button>
+                  ]
                 </div>
               </div>
             );

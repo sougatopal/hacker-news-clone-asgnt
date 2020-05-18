@@ -44,8 +44,10 @@ body {
 .news-col {
   width: 80%;
   text-align: left;
-  font-size: 0.55rem;
+}
+.news-wrapper .news-col {
   color: #828282;
+  font-size: 0.55rem;
 }
 .footer {
   padding: 1.5rem;
@@ -55,6 +57,7 @@ body {
 .pagination-bt {
   cursor: pointer;
   font-size: 0.75rem;
+  border: none;
 }
 .author-text {
   font-size: 0.65rem;
@@ -63,4 +66,10 @@ body {
 .news-text {
   font-size: 0.95rem;
   color: #000000;
+}
+.hide-bt {
+  border: none;
+  cursor: pointer;
+  background-color: #f6f6ef;
+  font-size: 0.55rem;
 }
