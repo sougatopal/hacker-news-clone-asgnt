@@ -14,11 +14,15 @@ body {
   justify-content: space-between;
   background-color: #f6f6ef;
   text-align: left;
+  line-height: 1rem;
 }
 .header {
   background-color: #ff742b;
   color: #ffffff;
   font-size: 0.75rem;
+}
+.news-wrapper:nth-child(even) {
+  background-color: #e1e1e1;
 }
 .com-col {
   width: 5%;
@@ -49,6 +53,10 @@ body {
   color: #828282;
   font-size: 0.55rem;
 }
+.news-col a {
+  text-decoration: none;
+  color: #828282;
+}
 .footer {
   padding: 1.5rem;
   margin-bottom: 50px;
@@ -58,6 +66,7 @@ body {
   cursor: pointer;
   font-size: 0.75rem;
   border: none;
+  background-color: inherit;
 }
 .author-text {
   font-size: 0.65rem;
@@ -70,6 +79,34 @@ body {
 .hide-bt {
   border: none;
   cursor: pointer;
-  background-color: #f6f6ef;
+  background-color: inherit;
   font-size: 0.55rem;
+}
+.line-container {
+  height: 400px;
+}
+.mobile-responsive-text {
+  display: none;
+}
+@media only screen and (max-width: 550px) and (min-width: 300px) {
+  .header,
+  .news-wrapper {
+    flex-wrap: wrap-reverse;
+    justify-content: space-evenly;
+  }
+  .news-col {
+    width: 100%;
+  }
+  .vote-col,
+  .upvote-col,
+  .com-col {
+    width: auto;
+    font-size: 0.65rem;
+  }
+  .mobile-responsive-text {
+    display: inline;
+  }
+  .news-text {
+    font-size: 0.75rem;
+  }
 }
