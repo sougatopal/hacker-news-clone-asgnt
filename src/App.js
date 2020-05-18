@@ -1,82 +1,83 @@
 import React from "react";
 import "./styles.css";
+import { connect } from "react-redux";
+import { fetchNews, hide, upVote } from "./actions";
+import Header from "../src/components/Header";
+import Newsrow from "../src/components/Newsrow";
+import { timeDifference, manageHideArray, managePointObj } from "./utils";
 
-const api = "https://hn.algolia.com/api/v1/search?tags=front_page";
-
-export default class App extends React.Component {
+export class App extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      hits: [],
-      curPages: 0,
-      totPage: 0
-    };
     this.paginationFn = this.paginationFn.bind(this);
-    this.fetchNews = this.fetchNews.bind(this);
-    this.urlTrimmer = this.urlTrimmer.bind(this);
+    this.upVote = this.upVote.bind(this);
+    this.hide = this.hide.bind(this);
   }
   componentDidMount() {
-    this.fetchNews();
+    this.props.fetchNews();
   }
-  fetchNews(pageNo) {
-    let url = pageNo ? api + "&page=" + pageNo : api;
-    fetch(url)
-      .then(res => res.json())
-      .then(res => {
-        console.log(res);
-        let hits = res.hits;
-        let curPages = res.page;
-        let totPage = res.nbPages - 1;
-        this.setState({ hits, curPages, totPage });
-      });
+
+  filterforVotes(arr) {
+    let pointJson = managePointObj();
+    for (let i = 0; i < arr.length; i++) {
+      if (pointJson[arr[i].objectID]) {
+        arr[i].points = pointJson[arr[i].objectID];
+      }
+    }
+    return arr;
+  }
+
+  filterforHiddenValues(arr) {
+    let hiddenArr = manageHideArray();
+    let arrtobeReturned = arr.filter(elem => {
+      return !hiddenArr.includes(elem.objectID);
+    });
+    return arrtobeReturned;
   }
   paginationFn(side) {
     console.log(side);
     if (side === "next") {
-      let curPage = this.state.curPages;
-      this.fetchNews(curPage + 1);
+      let curPage = this.props.curPages;
+      this.props.fetchNews(curPage + 1);
     }
     if (side === "prev") {
-      let curPage = this.state.curPages;
-      this.fetchNews(curPage - 1);
+      let curPage = this.props.curPages;
+      this.props.fetchNews(curPage - 1);
     }
   }
-  urlTrimmer(url) {
-    var urlParts = url
-      .replace("http://", "")
-      .replace("https://", "")
-      .split(/[/?#]/);
-    return urlParts[0];
+  upVote(obj) {
+    this.props.upVote(obj);
+  }
+
+  hide(obj) {
+    this.props.hide(obj);
+  }
+  getDaysAgo(dt) {
+    let cDate = new Date();
+    let prevDate = new Date(dt);
+    return timeDifference(cDate, prevDate);
   }
   render() {
+    console.log("props", this.props);
+    const { hits = [], curPages = 0, totPage = 0 } = this.props;
     return (
       <div className="App">
-        <header className="header">
-          <div className="com-col">comments</div>
-          <div className="vote-col">Vote counts</div>
-          <div className="upvote-col">UpVotes</div>
-          <div className="news-col">News Details</div>
-        </header>
+        <Header />
         <div className="news-wrapper-container">
-          {this.state.hits.map((elem, index) => {
+          {hits.map((elem, index) => {
             return (
-              <div key={index} className="news-wrapper">
-                <div className="com-col">{elem.num_comments}</div>
-                <div className="vote-col">{elem.points}</div>
-                <div className="upvote-col" />
-                <div className="news-col">
-                  <span className="news-text">{elem.title} </span>
-                  <a href={elem.url} rel="noopener noreferrer" target="_blank">
-                    {this.urlTrimmer(elem.url)}
-                  </a>{" "}
-                  by <span className="author-text">{elem.author}</span>
-                </div>
-              </div>
+              <Newsrow
+                key={elem.objectID}
+                elem={elem}
+                hide={this.hide}
+                getDaysAgo={this.getDaysAgo}
+                upVote={this.upVote}
+              />
             );
           })}
         </div>
         <footer className="footer">
-          {this.state.curPages !== 0 ? (
+          {curPages !== 0 ? (
             <button
               className="pagination-bt"
               onClick={e => this.paginationFn("prev")}
@@ -87,7 +88,7 @@ export default class App extends React.Component {
             ""
           )}
           |
-          {this.state.curPages !== this.state.totPage ? (
+          {curPages !== totPage ? (
             <button
               className="pagination-bt"
               onClick={e => this.paginationFn("next")}
@@ -102,3 +103,16 @@ export default class App extends React.Component {
     );
   }
 }
+
+const mapStateToProps = state => {
+  return {
+    hits: state.data.hits,
+    curPages: state.data.curPages,
+    totPage: state.data.totPage
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  { fetchNews, hide, upVote }
+)(App);
