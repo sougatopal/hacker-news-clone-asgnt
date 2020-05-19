@@ -4,7 +4,7 @@ import { connect } from "react-redux";
 import { fetchNews, hide, upVote } from "./actions";
 import Header from "../src/components/Header";
 import Newsrow from "../src/components/Newsrow";
-import { timeDifference, manageHideArray, managePointObj } from "./utils";
+import { manageHideArray, managePointObj } from "./utils";
 
 export class App extends React.Component {
   constructor(props) {
@@ -16,32 +16,13 @@ export class App extends React.Component {
   componentDidMount() {
     this.props.fetchNews();
   }
-
-  filterforVotes(arr) {
-    let pointJson = managePointObj();
-    for (let i = 0; i < arr.length; i++) {
-      if (pointJson[arr[i].objectID]) {
-        arr[i].points = pointJson[arr[i].objectID];
-      }
-    }
-    return arr;
-  }
-
-  filterforHiddenValues(arr) {
-    let hiddenArr = manageHideArray();
-    let arrtobeReturned = arr.filter(elem => {
-      return !hiddenArr.includes(elem.objectID);
-    });
-    return arrtobeReturned;
-  }
   paginationFn(side) {
     console.log(side);
+    let curPage = this.props.curPages;
     if (side === "next") {
-      let curPage = this.props.curPages;
       this.props.fetchNews(curPage + 1);
     }
     if (side === "prev") {
-      let curPage = this.props.curPages;
       this.props.fetchNews(curPage - 1);
     }
   }
@@ -51,11 +32,6 @@ export class App extends React.Component {
 
   hide(obj) {
     this.props.hide(obj);
-  }
-  getDaysAgo(dt) {
-    let cDate = new Date();
-    let prevDate = new Date(dt);
-    return timeDifference(cDate, prevDate);
   }
   render() {
     console.log("props", this.props);
@@ -70,7 +46,6 @@ export class App extends React.Component {
                 key={elem.objectID}
                 elem={elem}
                 hide={this.hide}
-                getDaysAgo={this.getDaysAgo}
                 upVote={this.upVote}
               />
             );
@@ -104,9 +79,26 @@ export class App extends React.Component {
   }
 }
 
+function filterforVotes(arr) {
+  let pointJson = managePointObj();
+  for (let i = 0; i < arr.length; i++) {
+    if (pointJson[arr[i].objectID]) {
+      arr[i].points = pointJson[arr[i].objectID];
+    }
+  }
+  return arr;
+}
+
+function filterforHiddenValues(arr) {
+  let hiddenArr = manageHideArray();
+  let arrtobeReturned = arr.filter(elem => {
+    return !hiddenArr.includes(elem.objectID);
+  });
+  return arrtobeReturned;
+}
 const mapStateToProps = state => {
   return {
-    hits: state.data.hits,
+    hits: filterforVotes(filterforHiddenValues(state.data.hits)),
     curPages: state.data.curPages,
     totPage: state.data.totPage
   };

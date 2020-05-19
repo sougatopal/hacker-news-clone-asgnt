@@ -1,7 +1,15 @@
 import { REQUEST_APPS, RECEIVE_APPS } from "./actions";
 import { manageHideArray, managePointObj } from "./utils";
 
-function apps(state = { isFetching: false, data: {} }, action) {
+const initialState = {
+  isFetching: false,
+  data: {
+    hits: [],
+    curPages: 0,
+    totPage: 0
+  }
+};
+function apps(state = initialState, action) {
   console.log("state is", state);
   switch (action.type) {
     case REQUEST_APPS:

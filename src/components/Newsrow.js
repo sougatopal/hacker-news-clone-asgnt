@@ -1,8 +1,8 @@
 import React from "react";
-import { urlTrimmer } from "../utils";
+import { urlTrimmer, timeDifference } from "../utils";
 
 export default function Newsrow(props) {
-  const { elem, hide, getDaysAgo, upVote } = props;
+  const { elem, hide, upVote } = props;
   return (
     <div key={elem.objectID} className="news-wrapper">
       <div className="com-col">
@@ -19,7 +19,7 @@ export default function Newsrow(props) {
           {urlTrimmer(elem.url)}
         </a>{" "}
         by <span className="author-text">{elem.author}</span>{" "}
-        {getDaysAgo(elem.created_at)} [
+        {timeDifference(new Date(), new Date(elem.created_at))} [
         <button className="hide-bt" onClick={e => hide(elem)}>
           hide
         </button>
