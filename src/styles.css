@@ -59,14 +59,17 @@ body {
 }
 .footer {
   padding: 1.5rem;
-  margin-bottom: 50px;
+  margin-bottom: 10px;
   text-align: right;
+  color: #ff742b;
+  border-bottom: 2px solid #ff742b;
 }
 .pagination-bt {
   cursor: pointer;
   font-size: 0.75rem;
   border: none;
   background-color: inherit;
+  color: #ff742b;
 }
 .author-text {
   font-size: 0.65rem;

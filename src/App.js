@@ -5,6 +5,7 @@ import { fetchNews, hide, upVote } from "./actions";
 import Header from "../src/components/Header";
 import Newsrow from "../src/components/Newsrow";
 import { manageHideArray, managePointObj } from "./utils";
+import Linegraph from "./components/Linegraph";
 
 export class App extends React.Component {
   constructor(props) {
@@ -74,6 +75,11 @@ export class App extends React.Component {
             ""
           )}
         </footer>
+        <div className="chart-container">
+          {this.props.linegraphData && this.props.linegraphData.length > 0 && (
+            <Linegraph linegraphData={this.props.linegraphData} />
+          )}
+        </div>
       </div>
     );
   }
@@ -96,11 +102,22 @@ function filterforHiddenValues(arr) {
   });
   return arrtobeReturned;
 }
+function makeLineGraphData(hits) {
+  let lineJson = [];
+  hits.forEach(elem => {
+    lineJson.push({
+      ID: elem.objectID,
+      vote: elem.points
+    });
+  });
+  return lineJson;
+}
 const mapStateToProps = state => {
   return {
     hits: filterforVotes(filterforHiddenValues(state.data.hits)),
     curPages: state.data.curPages,
-    totPage: state.data.totPage
+    totPage: state.data.totPage,
+    linegraphData: makeLineGraphData(state.data.hits)
   };
 };
 
