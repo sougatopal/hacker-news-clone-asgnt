@@ -6,6 +6,7 @@ import Header from "../src/components/Header";
 import Newsrow from "../src/components/Newsrow";
 import { manageHideArray, managePointObj } from "./utils";
 import Linegraph from "./components/Linegraph";
+import Footer from "../src/components/Footer";
 
 export class App extends React.Component {
   constructor(props) {
@@ -35,7 +36,6 @@ export class App extends React.Component {
     this.props.hide(obj);
   }
   render() {
-    console.log("props", this.props);
     const { hits = [], curPages = 0, totPage = 0 } = this.props;
     return (
       <div className="App">
@@ -52,29 +52,12 @@ export class App extends React.Component {
             );
           })}
         </div>
-        <footer className="footer">
-          {curPages !== 0 ? (
-            <button
-              className="pagination-bt"
-              onClick={e => this.paginationFn("prev")}
-            >
-              prev
-            </button>
-          ) : (
-            ""
-          )}
-          |
-          {curPages !== totPage ? (
-            <button
-              className="pagination-bt"
-              onClick={e => this.paginationFn("next")}
-            >
-              next
-            </button>
-          ) : (
-            ""
-          )}
-        </footer>
+        <Footer
+          curPages={curPages}
+          paginationFn={this.paginationFn}
+          totPage={totPage}
+        />
+
         <div className="chart-container">
           {this.props.linegraphData && this.props.linegraphData.length > 0 && (
             <Linegraph linegraphData={this.props.linegraphData} />
